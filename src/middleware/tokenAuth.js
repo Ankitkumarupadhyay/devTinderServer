@@ -3,6 +3,7 @@ const User = require("../models/user");
 
 const userAuth = async (req, res, next) => {
   try {
+    console.log(req);
     const { token } = req.cookies;
     if (!token) {
       throw new Error("Please login");
@@ -22,4 +23,4 @@ const userAuth = async (req, res, next) => {
   }
 };
 
-module.exports = {userAuth};
+module.exports = { userAuth };

@@ -46,12 +46,12 @@ authRouter.post("/signup", async (req, res) => {
     }
     await user.save();
     res.json({
-      message :"User created successfully",
-      data : user
+      message: "User created successfully",
+      data: user,
     });
   } catch (err) {
     res.status(400).send(err.message);
-    
+
     // console.log(err.message);
   }
 });
@@ -76,8 +76,8 @@ authRouter.post("/login", async (req, res) => {
 
       res.cookie("token", token);
       res.json({
-        message :"Login successfull",
-        data : user
+        message: "Login successfull",
+        data: user,
       });
     } else {
       throw new Error("Invalid credentials");
