@@ -1,6 +1,6 @@
 // const { adminAuth, userAuth } = require("./middleware/adminAuthenticate");
 const express = require("express");
-const connectDB = require("./config/database");
+const connectDB = require("./src/config/database");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 require('dotenv').config();
@@ -18,10 +18,10 @@ app.use(
   })
 );
 
-const authRouter = require("./routes/auth");
-const connectionRequestRouter = require("./routes/connectionRequest");
-const profileRouter = require("./routes/profile");
-const userRouter = require("./routes/user");
+const authRouter = require("./src/routes/auth");
+const connectionRequestRouter = require("./src/routes/connectionRequest");
+const profileRouter = require("./src/routes/profile");
+const userRouter = require("./src/routes/user");
 
 app.use("/", authRouter);
 app.use("/", profileRouter);
