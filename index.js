@@ -3,8 +3,7 @@ const express = require("express");
 const connectDB = require("./src/config/database");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
-require('dotenv').config();
-
+require("dotenv").config();
 
 const app = express();
 
@@ -27,11 +26,11 @@ app.use("/", authRouter);
 app.use("/", profileRouter);
 app.use("/", connectionRequestRouter);
 app.use("/", userRouter);
-app.get("/",(req,res)=>{
-  res.send("Welcome")
-})
+app.get("/", (req, res) => {
+  res.send("Welcome");
+});
 
-const PORT = process.env.PORT || 7777
+const PORT = process.env.PORT || 7777;
 
 connectDB()
   .then(() => {

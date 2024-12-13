@@ -9,6 +9,7 @@ const authRouter = express.Router();
 authRouter.post("/signup", async (req, res) => {
   try {
     // Validate the data(We have done validation at schema level of database)
+    // console.log("api hitted ");
     const {
       firstName,
       lastName,

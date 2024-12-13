@@ -16,8 +16,8 @@ userRouter.get("/user/connections", userAuth, async (req, res) => {
         { fromUserId: userId, status: "accepted" },
       ],
     })
-      .populate("fromUserId", ["firstName", "lastName","photoUrl"])
-      .populate("toUserId", ["firstName", "lastName","photoUrl"]);
+      .populate("fromUserId", ["firstName", "lastName", "photoUrl"])
+      .populate("toUserId", ["firstName", "lastName", "photoUrl"]);
     if (!connectionRequest) {
       throw new Error("No connections found !!!, Make new connections ");
     }
@@ -46,7 +46,7 @@ userRouter.get("/user/requests", userAuth, async (req, res) => {
     const connectionRequest = await ConnectionRequest.find({
       toUserId: userId,
       status: "interested",
-    }).populate("fromUserId", ["firstName", "lastName","photoUrl"]);
+    }).populate("fromUserId", ["firstName", "lastName", "photoUrl"]);
     if (!connectionRequest) {
       throw new Error("No  connection request found");
     }
