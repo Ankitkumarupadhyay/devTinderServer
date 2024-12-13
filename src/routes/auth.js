@@ -75,7 +75,12 @@ authRouter.post("/login", async (req, res) => {
       const token = await jwt.sign({ _id: user._id }, "Ankit@428@token");
       // console.log(token);
 
-      res.cookie("token", token);
+      res.cookie('token', token, {
+        httpOnly: true,       // Prevent client-side access
+        secure: true,         // Send cookies only over HTTPS
+        sameSite: 'None',     // Allow cross-origin requests
+        // maxAge: 24 * 60 * 60 * 1000, // Optional: cookie expiration
+      });
       res.json({
         message: "Login successfull",
         data: user,
