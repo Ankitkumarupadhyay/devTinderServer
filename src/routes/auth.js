@@ -3,10 +3,12 @@ const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const validator = require("validator");
 const jwt = require("jsonwebtoken");
+const upload = require("../utils/multer");
+const uploadToCloudinary = require("../utils/uploadToCloudinary");
 
 const authRouter = express.Router();
 
-authRouter.post("/signup", async (req, res) => {
+authRouter.post("/signup", upload.single("photoUrl"), async (req, res) => {
   try {
     // Validate the data(We have done validation at schema level of database)
     // console.log("api hitted ");
@@ -17,7 +19,6 @@ authRouter.post("/signup", async (req, res) => {
       password,
       age,
       gender,
-      photoUrl,
       about,
       skills,
     } = req.body;
@@ -30,6 +31,9 @@ authRouter.post("/signup", async (req, res) => {
     //Encrypt the passwords
     const passwordHash = await bcrypt.hash(password, 10);
 
+    const filePath = req.file.path;
+    const result = await uploadToCloudinary(filePath, "devTinder");
+
     const user = new User({
       firstName,
       lastName,
@@ -37,7 +41,7 @@ authRouter.post("/signup", async (req, res) => {
       password: passwordHash,
       age,
       gender,
-      photoUrl,
+      photoUrl: result.url,
       about,
       skills,
     });
@@ -75,10 +79,10 @@ authRouter.post("/login", async (req, res) => {
       const token = await jwt.sign({ _id: user._id }, "Ankit@428@token");
       // console.log(token);
 
-      res.cookie('token', token, {
-        httpOnly: true,       // Prevent client-side access
-        secure: true,         // Send cookies only over HTTPS
-        sameSite: 'None',     // Allow cross-origin requests
+      res.cookie("token", token, {
+        httpOnly: true, // Prevent client-side access
+        secure: true, // Send cookies only over HTTPS
+        sameSite: "None", // Allow cross-origin requests
         // maxAge: 24 * 60 * 60 * 1000, // Optional: cookie expiration
       });
       res.json({
