@@ -4,9 +4,6 @@ const path = require("path");
 const fs = require("fs");
 
 const tempDir = "./uploads";
-if (!fs.existsSync(tempDir)) {
-  fs.mkdirSync(tempDir);
-}
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
