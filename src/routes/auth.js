@@ -4,7 +4,6 @@ const bcrypt = require("bcrypt");
 const validator = require("validator");
 const jwt = require("jsonwebtoken");
 const upload = require("../utils/multer");
-const uploadToCloudinary = require("../utils/uploadToCloudinary");
 
 const authRouter = express.Router();
 
@@ -31,9 +30,6 @@ authRouter.post("/signup", upload.single("photoUrl"), async (req, res) => {
     //Encrypt the passwords
     const passwordHash = await bcrypt.hash(password, 10);
 
-    const filePath = req.file.path;
-    const result = await uploadToCloudinary(filePath, "devTinder");
-
     const user = new User({
       firstName,
       lastName,
@@ -41,7 +37,7 @@ authRouter.post("/signup", upload.single("photoUrl"), async (req, res) => {
       password: passwordHash,
       age,
       gender,
-      photoUrl: result.url,
+      photoUrl: req.file.path,
       about,
       skills,
     });
