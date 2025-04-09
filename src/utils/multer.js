@@ -1,19 +1,16 @@
-// middleware/multer.js
-const multer = require("multer");
-const path = require("path");
-const fs = require("fs");
+const multer = require('multer');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const cloudinary = require('./cloudinary'); 
 
-const tempDir = "./uploads";
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, tempDir);
-  },
-  filename: (req, file, cb) => {
-    const uniqueName = `${Date.now()}-${file.originalname}`;
-    cb(null, uniqueName);
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'uploads', 
+    format: async (req, file) => 'png', 
+    public_id: (req, file) => file.originalname.split('.')[0], 
   },
 });
+
 
 const upload = multer({ storage });
 
