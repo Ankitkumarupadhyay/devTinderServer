@@ -102,6 +102,9 @@ authRouter.post("/logout", (req, res) => {
   //   res.clearCookie("token");
   res.cookie("token", null, {
     expires: new Date(Date.now()),
+    httpOnly: true,
+    secure: true, // Important for HTTPS
+    sameSite: "None", // Allow cross-site cookies
   });
   res.send("Logged out successfully");
 });
