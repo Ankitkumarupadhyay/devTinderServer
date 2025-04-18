@@ -22,6 +22,10 @@ authRouter.post("/signup", upload.single("photoUrl"), async (req, res) => {
       skills,
     } = req.body;
 
+    if (!req.file) {
+      res.status(400).json({ message: "Image upload failed" });
+    }
+
     //Check for existing email
     const userExist = await User.findOne({ emailId: emailId });
     if (userExist) {
