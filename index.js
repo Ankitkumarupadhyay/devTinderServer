@@ -11,9 +11,9 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL, // replace with your domain name
-    credentials: true, // enable set cookies from server to client
-    methods: ["GET", "POST", "PATCH", "PUT", "DELETE"],
+    origin: process.env.FRONTEND_URL, // e.g., "http://localhost:3000"
+    credentials: true,
+    methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
   })
 );
 
