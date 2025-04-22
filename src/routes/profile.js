@@ -4,6 +4,7 @@ const validateEditProfileData = require("../utils/validation");
 const validator = require("validator");
 const bcrypt = require("bcrypt");
 const User = require("../models/user");
+const upload = require("../utils/multer");
 
 const profileRouter = express.Router();
 
@@ -20,28 +21,37 @@ profileRouter.get("/profile/view", userAuth, async (req, res) => {
   }
 });
 
-profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
-  try {
-    if (!validateEditProfileData(req.body)) {
-      throw new Error("Invalid updates");
+profileRouter.patch(
+  "/profile/edit",
+  userAuth,
+  upload.single("photoUrl"),
+  async (req, res) => {
+    try {
+      if (!validateEditProfileData(req.body)) {
+        throw new Error("Invalid updates");
+      }
+      const user = req.user;
+
+      Object.keys(req.body).forEach((key) => {
+        user[key] = req.body[key];
+        // console.log(key, req.body[key]);
+      });
+
+      if (req.file) {
+        user["photoUrl"] = req.file.path;
+      }
+
+      const updatedUser = await user.save();
+
+      res.json({
+        message: updatedUser.firstName + " your profile updated succesfully",
+        data: updatedUser,
+      });
+    } catch (err) {
+      res.status(400).send("Error : " + err.message);
     }
-    const user = req.user;
-
-    Object.keys(req.body).forEach((key) => {
-      user[key] = req.body[key];
-      // console.log(key, req.body[key]);
-    });
-
-    const updatedUser = await user.save();
-
-    res.json({
-      message: updatedUser.firstName + " your profile updated succesfully",
-      data: updatedUser,
-    });
-  } catch (err) {
-    res.status(400).send("Error : " + err.message);
   }
-});
+);
 
 profileRouter.patch("/profile/password", userAuth, async (req, res) => {
   try {
