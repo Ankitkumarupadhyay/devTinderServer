@@ -1,4 +1,6 @@
-const validateEditProfileData = (req) => {
+export const validateEditProfileData = (
+  body: Record<string, string | number | string[] | undefined>
+): boolean => {
   const allowedUpdates = [
     "firstName",
     "lastName",
@@ -8,7 +10,7 @@ const validateEditProfileData = (req) => {
     "about",
     "skills",
   ];
-  const isUpdateAllowed = Object.keys(req).every((key) =>
+  const isUpdateAllowed = Object.keys(body).every((key) =>
     allowedUpdates.includes(key)
   );
   if (!isUpdateAllowed) {
@@ -17,4 +19,4 @@ const validateEditProfileData = (req) => {
   return isUpdateAllowed;
 };
 
-module.exports = validateEditProfileData;
+export default validateEditProfileData;
