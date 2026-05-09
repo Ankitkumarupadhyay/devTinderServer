@@ -10,9 +10,14 @@ const app = express();
 
 app.use(express.json());
 app.use(cookieParser());
+let frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
+if (frontendUrl.endsWith("/")) {
+  frontendUrl = frontendUrl.slice(0, -1);
+}
+
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL, // e.g., "http://localhost:3000"
+    origin: frontendUrl,
     credentials: true,
     methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
   })

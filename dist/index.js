@@ -12,8 +12,12 @@ dotenv_1.default.config();
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use((0, cookie_parser_1.default)());
+let frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
+if (frontendUrl.endsWith("/")) {
+    frontendUrl = frontendUrl.slice(0, -1);
+}
 app.use((0, cors_1.default)({
-    origin: process.env.FRONTEND_URL, // e.g., "http://localhost:3000"
+    origin: frontendUrl,
     credentials: true,
     methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
 }));
