@@ -1,7 +1,23 @@
-const mongoose = require("mongoose");
-const validator = require("validator");
+import mongoose, { Document, Schema, Model } from "mongoose";
+import validator from "validator";
 
-const userSchema = mongoose.Schema(
+export interface IUser {
+  firstName: string;
+  lastName?: string;
+  emailId: string;
+  password?: string;
+  age?: number;
+  skills: string[];
+  photoUrl: string;
+  gender?: "Male" | "Female" | "Other";
+  about: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface IUserDocument extends IUser, Document {}
+
+const userSchema = new Schema<IUserDocument>(
   {
     firstName: {
       type: String,
@@ -14,10 +30,9 @@ const userSchema = mongoose.Schema(
     emailId: {
       type: String,
       required: true,
-      // unique: true,
-      lowerCase: true,
+      lowercase: true,
       trim: true,
-      validate(value) {
+      validate(value: string) {
         if (!validator.isEmail(value)) {
           throw new Error("Enter valid email id" + value);
         }
@@ -26,7 +41,7 @@ const userSchema = mongoose.Schema(
     password: {
       type: String,
       required: true,
-      validate(value) {
+      validate(value: string) {
         if (!validator.isStrongPassword(value)) {
           throw new Error("Enter a strong password" + value);
         }
@@ -37,7 +52,8 @@ const userSchema = mongoose.Schema(
       min: 18,
     },
     skills: {
-      type: [],
+      type: [String],
+      default: [],
     },
     photoUrl: {
       type: String,
@@ -46,7 +62,7 @@ const userSchema = mongoose.Schema(
     },
     gender: {
       type: String,
-      validate(value) {
+      validate(value: string) {
         if (!["Male", "Female", "Other"].includes(value)) {
           throw new Error("Please enter valid gender");
         }
@@ -62,6 +78,6 @@ const userSchema = mongoose.Schema(
   }
 );
 
-const User = mongoose.model("User", userSchema);
+const User: Model<IUserDocument> = mongoose.models.User || mongoose.model<IUserDocument>("User", userSchema);
 
-module.exports = User;
+export default User;

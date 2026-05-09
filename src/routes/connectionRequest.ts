@@ -1,23 +1,27 @@
-const express = require("express");
-const { userAuth } = require("../middleware/tokenAuth");
-const ConnectionRequest = require("../models/connectionRequest");
-const User = require("../models/user");
+import express, { Response } from "express";
+import { userAuth } from "../middleware/tokenAuth";
+import ConnectionRequest from "../models/connectionRequest";
+import User from "../models/user";
+import { CustomRequest } from "../types";
 
 const connectionRequestRouter = express.Router();
+
+interface SendParams {
+  status?: string;
+  toUserId?: string;
+}
 
 connectionRequestRouter.post(
   "/request/send/:status/:toUserId",
   userAuth,
-  async (req, res) => {
+  async (req: CustomRequest, res: Response): Promise<void> => {
     try {
-      const fromUserId = req.user._id;
-      const toUserId = req.params.toUserId;
-      const status = req.params.status;
-      // console.log(fromUserId, toUserId);
+      const fromUserId = req.user?._id;
+      const { status, toUserId } = req.params as Record<keyof SendParams, string>;
 
-      // if (fromUserId == toUserId) {
-      //   throw new Error("You can't send a connection request to yourself");
-      // }
+      if (!fromUserId) {
+        throw new Error("Please login");
+      }
 
       const allowedStatus = ["ignored", "interested"];
       if (!allowedStatus.includes(status)) {
@@ -41,7 +45,6 @@ connectionRequestRouter.post(
       }
 
       const toUser = await User.findById(toUserId);
-
       if (!toUser) {
         throw new Error("User not found");
       }
@@ -56,23 +59,28 @@ connectionRequestRouter.post(
 
       res.json({
         message:
-          req.user.firstName + " is " + status + " in " + toUser.firstName,
+          req.user?.firstName + " is " + status + " in " + toUser.firstName,
         data: data,
       });
     } catch (err) {
-      res.status(400).send("Error : " + err.message);
+      const error = err as Error;
+      res.status(400).send("Error : " + error.message);
     }
   }
 );
 
+interface ReviewParams {
+  status?: string;
+  requestId?: string;
+}
+
 connectionRequestRouter.post(
   "/request/review/:status/:requestId",
   userAuth,
-  async (req, res) => {
+  async (req: CustomRequest, res: Response): Promise<void> => {
     try {
       const loggedInUser = req.user;
-      const status = req.params.status;
-      const requestId = req.params.requestId;
+      const { status, requestId } = req.params as Record<keyof ReviewParams, string>;
 
       if (!loggedInUser) {
         throw new Error("Please login");
@@ -93,7 +101,7 @@ connectionRequestRouter.post(
         throw new Error("Connection request not found");
       }
 
-      connectionRequest.status = status;
+      connectionRequest.status = status as "accepted" | "rejected";
       const updatedConnectionRequest = await connectionRequest.save();
 
       res.json({
@@ -102,9 +110,10 @@ connectionRequestRouter.post(
         data: updatedConnectionRequest,
       });
     } catch (err) {
-      res.status(400).send("Error : " + err.message);
+      const error = err as Error;
+      res.status(400).send("Error : " + error.message);
     }
   }
 );
 
-module.exports = connectionRequestRouter;
+export default connectionRequestRouter;
